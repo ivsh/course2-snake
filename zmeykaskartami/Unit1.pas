@@ -1,0 +1,389 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, Menus;
+
+type
+  TForm1 = class(TForm)
+    PaintBox1: TPaintBox;
+    Button1: TButton;
+    Timer1: TTimer;
+    MainMenu1: TMainMenu;
+    maps: TMenuItem;
+    nonemam: TMenuItem;
+    map1: TMenuItem;
+    map2: TMenuItem;
+    map3: TMenuItem;
+    map4: TMenuItem;
+    map5: TMenuItem;
+    restart1: TMenuItem;
+    exit1: TMenuItem;
+    Panel2: TPanel;
+    Label1: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    speed1: TMenuItem;
+    N11: TMenuItem;
+    N21: TMenuItem;
+    N31: TMenuItem;
+    N41: TMenuItem;
+    N51: TMenuItem;
+    N61: TMenuItem;
+    N71: TMenuItem;
+    N81: TMenuItem;
+    N91: TMenuItem;
+    N101: TMenuItem;
+    procedure Button1Click(Sender: TObject);
+    procedure polzti(sender:tobject);
+    procedure FormKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+    procedure draw;
+    procedure rest;
+    procedure generate(var a,b:integer);
+    function prover(a,b:integer):boolean;
+    procedure drawsurface;
+    procedure map1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure nonemamClick(Sender: TObject);
+    procedure map2Click(Sender: TObject);
+    procedure restart1Click(Sender: TObject);
+    procedure map3Click(Sender: TObject);
+    procedure map4Click(Sender: TObject);
+    procedure map5Click(Sender: TObject);
+    procedure exit1Click(Sender: TObject);
+    procedure PaintBox1Click(Sender: TObject);
+    procedure N21Click(Sender: TObject);
+    procedure N31Click(Sender: TObject);
+    procedure N41Click(Sender: TObject);
+    procedure N51Click(Sender: TObject);
+    procedure N61Click(Sender: TObject);
+    procedure N71Click(Sender: TObject);
+    procedure N81Click(Sender: TObject);
+    procedure N91Click(Sender: TObject);
+    procedure N101Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+ const xcc=200;ycc=200;
+var
+  Form1: TForm1;
+  nap:integer;
+  xc,yc:integer;
+  mapstr:string;
+  zmeyx:array[1..xcc*ycc] of integer;
+  zmeyy:array[1..XCc*ycc] of integer;
+  lzm:integer;
+  speeed:integer;
+  gam,kush:boolean;
+  map:array[1..xcc,1..ycc] of char;
+  celx,cely,hvx,hvy:integer;
+  recor:array[1..11] of integer;names:array[1..11]of string;por:array[1..11]of byte;
+  perrec:integer;
+  f:textfile;
+implementation
+
+{$R *.dfm}
+
+procedure tform1.drawsurface;
+var i,j:integer;
+begin
+ repaint;
+ paintbox1.canvas.brush.color:=clblack;
+ for i:=1 to xc do
+ begin
+  for j:=1 to yc do
+  if map[i,j]='1' then
+  begin
+    paintbox1.Canvas.Rectangle(round(paintbox1.Width/xc*(i-1)),round(paintbox1.Height/yc*(j-1)),round(paintbox1.Width/xc*(i)),round(paintbox1.Height/yc*(j)));
+  end;
+ end;
+end;
+function tform1.prover(a,b:integer):boolean;
+var i:integer;flag:boolean;
+begin
+ flag:=false;
+ i:=lzm;
+ for i:=1 to lzm do
+ begin
+  if (zmeyx[i]=a)and(zmeyy[i]=b) then flag:=true;
+ end;
+ if (map[a,b]='1') then flag:=true;
+ result:=flag;
+end;
+procedure tform1.generate(var a,b:integer);
+var h:boolean; i,j:integer;
+begin
+  randomize;
+  a:=random(xc-1)+1;
+  b:=random(yc-1)+1;
+  h:=true; j:=1;i:=1;
+ while h do
+ begin
+  if (random(400)=200)and not(prover(i,j)) then begin a:=i;b:=j;h:=false;end;
+  inc(i);if i=xc+1 then begin i:=1;inc(j);if j=yc+1 then j:=1;end;
+ end;
+end;
+procedure tform1.draw;
+var i,j:integer;
+begin
+ paintbox1.canvas.brush.color:=clgreen;
+ for i:=1 to lzm do
+ paintbox1.Canvas.Rectangle(round(paintbox1.Width/xc*(zmeyx[i]-1)),round(paintbox1.Height/yc*(zmeyy[i]-1)),round(paintbox1.Width/xc*(zmeyx[i])),round(paintbox1.Height/yc*(zmeyy[i])));
+ paintbox1.canvas.brush.color:=clred;
+    paintbox1.Canvas.Rectangle(round(paintbox1.Width/xc*(celx-1)),round(paintbox1.Height/yc*(cely-1)),round(paintbox1.Width/xc*(celx)),round(paintbox1.Height/yc*(cely)));
+ if map[hvx,hvy]='1' then paintbox1.canvas.brush.color:=clblack
+ else paintbox1.canvas.brush.color:=clbtnface;
+ paintbox1.canvas.pen.color:=paintbox1.canvas.brush.color;
+  begin
+   paintbox1.Canvas.Rectangle(round(paintbox1.Width/xc*(hvx-1)),round(paintbox1.Height/yc*(hvy-1)),round(paintbox1.Width/xc*(hvx)),round(paintbox1.Height/yc*(hvy)));
+  end;
+  paintbox1.canvas.pen.color:=clblack;
+end;
+procedure TForm1.FormKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+case key of
+ vk_left:  if nap<>3 then nap:=1;
+ vk_right: if nap<>1 then nap:=3;
+ vk_up:    if nap<>4 then nap:=2;
+ vk_down:  if nap<>2 then nap:=4;
+ vk_pause: nap:=6
+end;
+end;
+procedure tform1.rest;
+var i,j:integer;e:textfile;
+begin
+  lzm:=(lzm-3)*speeed;
+  timer1.Enabled:=false;
+  paintbox1.Repaint;
+  gam:=true;
+  button1.Visible:=true;
+  generate(celx,cely);
+  maps.Visible:=true;
+  speed1.Visible:=true;
+  
+  paintbox1.repaint;
+end;
+procedure tform1.polzti(sender:tobject);
+var i,x,y:integer;
+begin
+ kush:=false;
+ x:=zmeyx[lzm];
+ y:=zmeyy[lzm];
+ hvx:=zmeyx[1];
+ hvy:=zmeyy[1];
+/////////////////////////////////////////////////
+ if nap<>6 then
+ begin
+ case nap of
+ 1:begin
+    dec(x);if x=0 then x:=xc-1;
+   end;
+ 3:begin
+    inc(x);if x=xc+1 then x:=1;
+ end;
+ 2:begin
+  dec(y);if y=0 then y:=yc-1;
+ end;
+ 4:begin
+  inc(y);if y=yc+1 then y:=1;
+ end;
+ end;
+ if prover(x,y) then    begin gam:=false;rest;end;
+ if (x=celx) and (y=cely) then
+ begin
+  kush:=true;
+  inc(lzm);
+  zmeyx[lzm]:=x;
+  zmeyy[lzm]:=y;
+
+  generate(celx,cely);
+
+  end;
+///////////////////////////////////
+ if gam and not(kush) then
+ begin;
+
+ for i:=1 to lzm-1 do
+ begin
+  zmeyx[i]:=zmeyx[i+1];
+  zmeyy[i]:=zmeyy[i+1];
+ end;
+ case nap of
+ 1:begin
+    dec(zmeyx[lzm]);if zmeyx[lzm]=0 then zmeyx[lzm]:=xc;
+   end;
+ 3:begin
+    inc(zmeyx[lzm]);if zmeyx[lzm]=xc+1 then zmeyx[lzm]:=1;
+ end;
+ 2:begin
+  dec(zmeyy[lzm]);if zmeyy[lzm]=0 then zmeyy[lzm]:=yc;
+ end;
+ 4:begin
+  inc(zmeyy[lzm]);if zmeyy[lzm]=yc+1 then zmeyy[lzm]:=1;
+ end;
+ end;
+ end;
+ draw;
+ end;
+end;
+procedure TForm1.Button1Click(Sender: TObject);
+var i,j,ply,plx:integer;e:textfile;
+begin
+  randomize;
+  speed1.Visible:=false;
+  panel2.Visible:=false;
+  maps.Visible:=false;
+
+  assignfile(e,mapstr);
+  reset(e);
+  readln(e,xc,yc,plx,ply);
+  zmeyx[1]:=plx+3;
+  zmeyy[1]:=ply;
+  zmeyx[2]:=plx+4;
+  zmeyy[2]:=ply;
+  zmeyx[3]:=plx+5;
+  zmeyy[3]:=ply;
+  lzm:=3;
+  nap:=3;
+  gam:=true;
+  button1.Visible:=false;
+  for j:=1 to yc do
+  begin
+   for i:=1 to xc do
+   begin
+    if eoln(e)then readln(e);
+    read(e,map[i,j]);
+   end;
+  end;
+  closefile(e);
+  randomize;
+  generate(celx,cely);
+  timer1.Enabled:=true;
+  drawsurface;
+  draw;
+
+end;
+
+procedure TForm1.map1Click(Sender: TObject);
+begin
+ mapstr:='map1.map';
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+ mapstr:='nonemap.map';
+end;
+
+procedure TForm1.nonemamClick(Sender: TObject);
+begin
+  mapstr:='nonemap.map';
+end;
+
+procedure TForm1.map2Click(Sender: TObject);
+begin
+  mapstr:='map2.map';
+end;
+
+procedure TForm1.restart1Click(Sender: TObject);
+begin
+ gam:=false;
+ rest;
+end;
+
+
+
+procedure TForm1.map3Click(Sender: TObject);
+begin
+  mapstr:='map3.map';
+end;
+
+procedure TForm1.map4Click(Sender: TObject);
+begin
+ mapstr:='map4.map';
+end;
+
+procedure TForm1.map5Click(Sender: TObject);
+begin
+  mapstr:='map5.map';
+end;
+
+procedure TForm1.exit1Click(Sender: TObject);
+begin
+   close;
+end;
+
+
+procedure TForm1.PaintBox1Click(Sender: TObject);
+begin
+  speeed:=1;
+  timer1.Interval:=round(500/speeed);
+end;
+
+procedure TForm1.N21Click(Sender: TObject);
+begin
+  speeed:=2;
+  timer1.Interval:=round(475/speeed);
+end;
+
+procedure TForm1.N31Click(Sender: TObject);
+begin
+   speeed:=3;
+  timer1.Interval:=round(450/speeed);
+end;
+
+procedure TForm1.N41Click(Sender: TObject);
+begin
+   speeed:=4;
+  timer1.Interval:=round(425/speeed);
+end;
+
+procedure TForm1.N51Click(Sender: TObject);
+begin
+   speeed:=5;
+   timer1.Interval:=round(400/speeed);
+end;
+
+procedure TForm1.N61Click(Sender: TObject);
+begin
+  speeed:=6;
+  timer1.Interval:=round(375/speeed);
+end;
+
+procedure TForm1.N71Click(Sender: TObject);
+begin
+   speeed:=7;
+  timer1.Interval:=round(350/speeed);
+end;
+
+procedure TForm1.N81Click(Sender: TObject);
+begin
+  speeed:=8;
+  timer1.Interval:=round(325/speeed);
+end;
+
+procedure TForm1.N91Click(Sender: TObject);
+begin
+   speeed:=9;
+  timer1.Interval:=round(300/speeed);
+end;
+
+procedure TForm1.N101Click(Sender: TObject);
+begin
+  speeed:=10;
+  timer1.Interval:=round(275/speeed);
+end;
+
+end.
